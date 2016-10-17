@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,16 +21,26 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HeadlinesFragment.OnHeadlineSelectedListener{
 
     private ArrayList<ImageObject> imageObjects = new ArrayList<ImageObject>();
-
+    public static final String DEBUG_TAG = "main_activity_debug_tag";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        if (findViewById(R.id.fragment_container) != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            SearchFragment searchFragment = new SearchFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, searchFragment,SearchFragment.SEARCH_FRAGMENT_TAG).commit();
+
+        }
     }
 
     @Override
@@ -62,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
         return imageObjects;
     }
 
+    @Override
+    public void onArticleSelected(int position) {
+
+    }
+
     public class HttpRequestTask extends AsyncTask<String, Void, JSONObject> {
 
         protected JSONObject doInBackground(String... url) {
@@ -76,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 imageJsonObjects = result.getJSONArray("items");
                 imageObjects.addAll(ImageObject.fromJSONArray(imageJsonObjects));
-                android.support.v4.app.Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.search_fragment);
-                if (currentFragment instanceof SearchFragment){
+                SearchFragment currentFragment = (SearchFragment)getSupportFragmentManager().findFragmentByTag(SearchFragment.SEARCH_FRAGMENT_TAG);
+                if (currentFragment != null && currentFragment.isVisible()){
                     ((SearchFragment) currentFragment).notifyAdapter();
                 }
             } catch (JSONException e) {

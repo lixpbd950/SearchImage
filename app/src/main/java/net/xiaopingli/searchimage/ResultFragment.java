@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 
@@ -16,6 +17,8 @@ import com.squareup.picasso.Picasso;
  * A simple {@link Fragment} subclass.
  */
 public class ResultFragment extends Fragment {
+
+    public static final String RESULT_FRAGMENT_TAG = "result_fragment_tag";
 
     public static final String IMAGEOBJECT_KEY = "imageobject_key";
     private ImageObject imageObject = null;
@@ -40,21 +43,23 @@ public class ResultFragment extends Fragment {
             imageObject = (ImageObject) savedInstanceState.getSerializable(IMAGEOBJECT_KEY);
         }
 
-        Log.d("tag-=========---","here");
-
         View rootView = inflater.inflate(R.layout.fragment_result, container, false);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams( LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT );
+        rootView.setLayoutParams(layoutParams);
         imageView = (ImageView) rootView.findViewById(R.id.result_image);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager().popBackStack();
+            }
+        });
 
         Bundle args = getArguments();
         if (args != null) {
             imageObject = (ImageObject) args.getSerializable(IMAGEOBJECT_KEY);
             String url = imageObject.getLink();
-            Log.d("tag-=========---","here,"+url);
-
             Picasso.with(getContext()).load(url).into(imageView);
-        }else{
-            Log.d("tag-=========---","here,empty");
-
         }
 
         return rootView;

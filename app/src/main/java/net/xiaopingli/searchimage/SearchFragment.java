@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +18,16 @@ import java.util.ArrayList;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment{
 
     private static final String GOOGLE_QUERY = "https://www.googleapis.com/customsearch/v1"
             +"?key=AIzaSyD_RO5nT2wmi2u_LrXg3YH7pCjnHaGcRf4&cx=007067661042286930144:7ryhle0ll8c&searchType=image&q=";
-    private static final String GOOGLE_QUERY2 = "https://mwstaticresponses.herokuapp.com/test_json";
     public static final String SEARCH_FRAGMENT_TAG = "search_fragment_tag";
 
-    ArrayList<ImageObject> imageObjects;
-    EditText editTextSearch;
-    Button buttonSearch;
-    GridView gridViewResult;
+    private ArrayList<ImageObject> imageObjects;
+    private EditText editTextSearch;
+    private Button buttonSearch;
+    private GridView gridViewResult;
     private ImageGridAdapter imageGridAdapter;
 
     public SearchFragment() {
@@ -61,13 +59,14 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String query = editTextSearch.getText().toString();
+
                 if (query != null){
-                    ((MainActivity)getActivity()).startHttpRequestTask(GOOGLE_QUERY+ Uri.encode(query));
+                    ((MainActivity)getActivity()).startHttpRequestTask(GOOGLE_QUERY+ Uri.encode(query)+"&start=1");
                 }
-//                ((MainActivity)getActivity()).startHttpRequestTask(GOOGLE_QUERY2);
 
             }
         });
+
 
         gridViewResult.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -84,5 +83,20 @@ public class SearchFragment extends Fragment {
                 fragmentTransaction.commit();
             }
         });
+
+        gridViewResult.setOnScrollListener(new ScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                loadMoreImages(totalItemsCount);
+            }
+        });
+    }
+
+    public void loadMoreImages(int totalItemsCount) {
+        String query = editTextSearch.getText().toString();
+
+        if (query != null){
+            ((MainActivity)getActivity()).startHttpRequestTask(GOOGLE_QUERY+ Uri.encode(query)+"&start="+totalItemsCount);
+        }
     }
 }

@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MainActivity extends AppCompatActivity implements HeadlinesFragment.OnHeadlineSelectedListener{
+public class MainActivity extends AppCompatActivity{
 
     private ArrayList<ImageObject> imageObjects = new ArrayList<ImageObject>();
     public static final String DEBUG_TAG = "main_activity_debug_tag";
@@ -73,10 +73,6 @@ public class MainActivity extends AppCompatActivity implements HeadlinesFragment
         return imageObjects;
     }
 
-    @Override
-    public void onArticleSelected(int position) {
-
-    }
 
     public class HttpRequestTask extends AsyncTask<String, Void, JSONObject> {
 

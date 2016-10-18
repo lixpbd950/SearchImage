@@ -25,7 +25,7 @@ public class ResultFragment extends Fragment {
     private ImageView imageView;
 
     public ResultFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
